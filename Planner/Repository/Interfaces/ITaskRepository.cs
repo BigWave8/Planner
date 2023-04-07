@@ -1,5 +1,4 @@
-﻿using Planner.Models;
-using Task = Planner.Models.Task;
+﻿using Task = Planner.Models.Task;
 
 namespace Planner.Repository.Interfaces
 {

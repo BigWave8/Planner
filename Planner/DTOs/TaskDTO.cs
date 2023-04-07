@@ -11,7 +11,7 @@ namespace Planner.DTOs
         public DateTime? Deadline { get; set; }
         public Guid ToDoListId { get; set; }
 
-        public TaskDTO(string name, string description, Status status, DateTime created, DateTime deadline, Guid toDoListId) 
+        public TaskDTO(string name, string? description, Status status, DateTime created, DateTime? deadline, Guid toDoListId) 
         { 
             Name = name;
             Description = description;
