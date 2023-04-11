@@ -3,7 +3,7 @@ using Planner.DTOs;
 
 namespace Planner.Validators
 {
-    public class UserValidator : AbstractValidator<UserDTO>
+    internal class UserValidator : AbstractValidator<UserDTO>
     {
         public UserValidator() 
         {

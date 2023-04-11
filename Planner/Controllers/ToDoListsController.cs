@@ -3,6 +3,7 @@ using Planner.DTOs;
 using Planner.Models;
 using Planner.Services.Interfaces;
 using System.ComponentModel.DataAnnotations;
+using Task = System.Threading.Tasks.Task;
 
 namespace Planner.Controllers
 {
@@ -18,12 +19,12 @@ namespace Planner.Controllers
         }
 
         [HttpPost]
-        public ActionResult<ToDoList> CreateToDoList(ToDoListDTO toDoListDTO)
+        public ActionResult<Task> Create(ToDoListDTO toDoListDTO)
         {
             try
             {
-                Guid id = _toDoListService.CreateToDoList(toDoListDTO);
-                return CreatedAtAction("GetToDoListId", new { id }, toDoListDTO);
+                Guid id = _toDoListService.Create(toDoListDTO);
+                return Ok(id);
             }
             catch (Exception ex)
             {

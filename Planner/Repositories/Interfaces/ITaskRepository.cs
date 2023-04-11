@@ -1,6 +1,6 @@
 ﻿using Task = Planner.Models.Task;
 
-namespace Planner.Repository.Interfaces
+namespace Planner.Repositories.Interfaces
 {
     public interface ITaskRepository
     {

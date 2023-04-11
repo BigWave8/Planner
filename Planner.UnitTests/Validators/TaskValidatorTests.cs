@@ -4,12 +4,12 @@ using Planner.DTOs;
 using Planner.Models;
 using Planner.Validators;
 
-namespace Planner.UnitTests.ValidatorsTests
+namespace Planner.UnitTests.Validators
 {
     [TestFixture]
     public class TaskValidatorTests
     {
-        private TaskValidator validator;
+        private IValidator<TaskDTO> validator;
         private const string ValidName = "test";
         private const string ValidDescription = "test";
         private const Status ValidStatus = Status.ToDo; //В мене може бути кілька валідних статусів, чи окей юзати лиш один?
@@ -140,7 +140,7 @@ namespace Planner.UnitTests.ValidatorsTests
             string name = ValidName,
             string description = ValidDescription, 
             Status status = ValidStatus, 
-            DateTime? created = null, 
+            DateTime? created = null,
             DateTime? deadline = null, 
             Guid? toDoListId = null)
         {

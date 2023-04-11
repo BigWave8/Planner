@@ -1,6 +1,6 @@
 ﻿using Planner.Models;
 
-namespace Planner.Repository.Interfaces
+namespace Planner.Repositories.Interfaces
 {
     public interface IToDoListRepository
     {

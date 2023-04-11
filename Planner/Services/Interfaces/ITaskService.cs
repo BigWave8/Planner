@@ -4,6 +4,6 @@ namespace Planner.Services.Interfaces
 {
     public interface ITaskService
     {
-        Guid CreateTask(TaskDTO taskDTO);
+        Guid Create(TaskDTO taskDTO);
     }
 }

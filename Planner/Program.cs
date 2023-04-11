@@ -1,14 +1,17 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
-using Planner.Repository;
+using Planner.Repositories;
 using Planner.Data;
 using Planner.Services.Interfaces;
 using Planner.Services;
-using Planner.Repository.Interfaces;
+using Planner.Repositories.Interfaces;
+using FluentValidation;
+using Planner.DTOs;
+using Planner.Validators;
 
 var builder = WebApplication.CreateBuilder(args);
-builder.Services.AddDbContext<PlannerContext>(options =>
-    options.UseSqlServer(builder.Configuration.GetConnectionString("PlannerContext") ?? throw new InvalidOperationException("Connection string 'PlannerContext' not found.")));
+
+builder.Services.AddDbContext<PlannerDBContext>(options => options.UseInMemoryDatabase(databaseName: "MockPlannerDb"));
 
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IToDoListService, ToDoListService>();
@@ -17,6 +20,10 @@ builder.Services.AddScoped<ITaskService, TaskService>();
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IToDoListRepository, ToDoListRepository>();
 builder.Services.AddScoped<ITaskRepository, TaskRepository>();
+
+builder.Services.AddScoped<IValidator<TaskDTO>, TaskValidator>();
+builder.Services.AddScoped<IValidator<ToDoListDTO>, ToDoListValidator>();
+builder.Services.AddScoped<IValidator<UserDTO>, UserValidator>();
 
 
 // Add services to the container.

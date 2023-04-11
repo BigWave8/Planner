@@ -1,48 +1,54 @@
 ﻿using FluentValidation;
+using FluentValidation.Results;
 using Planner.DTOs;
 using Planner.Models;
-using Planner.Repository.Interfaces;
+using Planner.Repositories.Interfaces;
 using Planner.Services.Interfaces;
 using Planner.Validators;
 using Task = Planner.Models.Task;
 
 namespace Planner.Services
 {
-    public class ToDoListService : IToDoListService
+    internal class ToDoListService : IToDoListService
     {
         private readonly IToDoListRepository _toDoListRepository;
         private readonly IUserRepository _userRepository;
-        public ToDoListService(IToDoListRepository toDoListRepository, IUserRepository userRepository) 
+        private readonly IValidator<ToDoListDTO> _validator;
+
+        public ToDoListService(IToDoListRepository toDoListRepository, IUserRepository userRepository, IValidator<ToDoListDTO> validator) 
         {
             _toDoListRepository = toDoListRepository;
             _userRepository = userRepository;
+            _validator = validator;
         }
-        public Guid CreateToDoList(ToDoListDTO toDoListDTO)
+        public Guid Create(ToDoListDTO toDoListDTO)
         {
-            ToDoListValidator validator = new();
-            validator.ValidateAndThrow(toDoListDTO);
+            ValidationResult validationResult = _validator.Validate(toDoListDTO);
+            if (!validationResult.IsValid)
+            {
+                throw new ValidationException(validationResult.Errors);
+            }
 
-            var user = _userRepository.GetById(toDoListDTO.UserId);
+            User user = _userRepository.GetById(toDoListDTO.UserId);
             if (user == null)
             {
                 throw new Exception("User not found");
             }
 
-            var toDoList = new ToDoList
-            {
-                Id = Guid.NewGuid(),
-                Name = toDoListDTO.Name,
-                UserId = toDoListDTO.UserId,
-                Tasks = new List<Task>()
-            };
-            Guid toDoListId = _toDoListRepository.Create(toDoList);
+            ToDoList toDoList = Convert(toDoListDTO);
 
-            return toDoListId;
+            return _toDoListRepository.Create(toDoList);
         }
 
-        public ToDoList GetToDoListById(Guid id)
+        public ToDoList GetById(Guid id)
+            => _toDoListRepository.GetById(id);
+
+        private static ToDoList Convert(ToDoListDTO toDoListDTO)
+        => new ToDoList
         {
-            return _toDoListRepository.GetById(id);
-        }
+            Id = Guid.NewGuid(),
+            Name = toDoListDTO.Name,
+            UserId = toDoListDTO.UserId,
+        };
     }
 }

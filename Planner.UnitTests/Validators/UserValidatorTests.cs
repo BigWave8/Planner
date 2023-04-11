@@ -4,12 +4,12 @@ using FluentValidation.Results;
 using Planner.DTOs;
 using Planner.Validators;
 
-namespace Planner.UnitTests.ValidatorsTests
+namespace Planner.UnitTests.Validators
 {
     [TestFixture]
     public class UserValidatorTests
     {
-        private UserValidator validator;
+        private UserValidator _validator;
         private const string ValidName = "test";
         private const string ValidSurname = "test";
         private const string ValidEmail = "test@gmail.com";
@@ -17,7 +17,7 @@ namespace Planner.UnitTests.ValidatorsTests
         [SetUp]
         public void SetUp()
         {
-            validator = new UserValidator();
+            _validator = new UserValidator();
         }
 
 
@@ -26,7 +26,7 @@ namespace Planner.UnitTests.ValidatorsTests
         {
             UserDTO userDTO = new(ValidName, ValidSurname, ValidEmail);
 
-            ValidationResult result = validator.Validate(userDTO);
+            ValidationResult result = _validator.Validate(userDTO);
 
             result.IsValid.Should().BeTrue();
         }
@@ -36,7 +36,7 @@ namespace Planner.UnitTests.ValidatorsTests
         {
             UserDTO userDTO = new(string.Empty, ValidSurname, ValidEmail);
 
-            Action act = () => validator.ValidateAndThrow(userDTO);
+            Action act = () => _validator.ValidateAndThrow(userDTO);
 
             act.Should().Throw<Exception>().Where(e => e.Message.Contains("Name can`t be empty"));
         }
@@ -47,7 +47,7 @@ namespace Planner.UnitTests.ValidatorsTests
         {
             UserDTO userDTO = new(name, ValidSurname, ValidEmail);
 
-            Action act = () => validator.ValidateAndThrow(userDTO);
+            Action act = () => _validator.ValidateAndThrow(userDTO);
 
             act.Should().Throw<Exception>().Where(e => e.Message.Contains("Name must be between 2 and 30 characters"));
         }
@@ -57,7 +57,7 @@ namespace Planner.UnitTests.ValidatorsTests
         {
             UserDTO userDTO = new(ValidName, string.Empty, ValidEmail);
 
-            Action act = () => validator.ValidateAndThrow(userDTO);
+            Action act = () => _validator.ValidateAndThrow(userDTO);
 
             act.Should().Throw<Exception>().Where(e => e.Message.Contains("Surname can`t be empty"));
         }
@@ -68,7 +68,7 @@ namespace Planner.UnitTests.ValidatorsTests
         {
             UserDTO userDTO = new(ValidName, surname, ValidEmail);
 
-            Action act = () => validator.ValidateAndThrow(userDTO);
+            Action act = () => _validator.ValidateAndThrow(userDTO);
 
             act.Should().Throw<Exception>().Where(e => e.Message.Contains("Surname must be between 2 and 30 characters"));
         }
@@ -87,7 +87,7 @@ namespace Planner.UnitTests.ValidatorsTests
         {
             UserDTO userDTO = new(ValidName, surname, ValidEmail);
 
-            Action act = () => validator.ValidateAndThrow(userDTO);
+            Action act = () => _validator.ValidateAndThrow(userDTO);
 
             act.Should().Throw<Exception>().Where(e => e.Message.Contains("Surname must contain only letters"));
         }
@@ -97,7 +97,7 @@ namespace Planner.UnitTests.ValidatorsTests
         {
             UserDTO userDTO = new(ValidName, ValidSurname, string.Empty);
 
-            Action act = () => validator.ValidateAndThrow(userDTO);
+            Action act = () => _validator.ValidateAndThrow(userDTO);
 
             act.Should().Throw<Exception>().Where(e => e.Message.Contains("Email can`t be empty"));
         }
@@ -116,7 +116,7 @@ namespace Planner.UnitTests.ValidatorsTests
         {
             UserDTO userDTO = new(ValidName, ValidSurname, email);
 
-            Action act = () => validator.ValidateAndThrow(userDTO);
+            Action act = () => _validator.ValidateAndThrow(userDTO);
 
             act.Should().Throw<Exception>().Where(e => e.Message.Contains("It's not like email"));
         }

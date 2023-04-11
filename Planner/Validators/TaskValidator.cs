@@ -4,7 +4,7 @@ using Planner.Models;
 
 namespace Planner.Validators
 {
-    public class TaskValidator : AbstractValidator<TaskDTO>
+    internal class TaskValidator : AbstractValidator<TaskDTO>
     {
         public TaskValidator() 
         {

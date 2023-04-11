@@ -1,12 +1,14 @@
 ﻿using FluentAssertions;
+using FluentValidation;
+using FluentValidation.Results;
 using Moq;
 using Planner.DTOs;
 using Planner.Models;
-using Planner.Repository.Interfaces;
+using Planner.Repositories.Interfaces;
 using Planner.Services;
 using ValidationException = FluentValidation.ValidationException;
 
-namespace Planner.UnitTests.ServicesTests
+namespace Planner.UnitTests.Services
 {
     [TestFixture]
     public class UserServiceTests
@@ -16,13 +18,16 @@ namespace Planner.UnitTests.ServicesTests
         private const string ValidEmail = "test@gmail.com";
         private const string ExistEmail = "ro@gmail.com";
         private Mock<IUserRepository> userRepositoryMock;
+        private Mock<IValidator<UserDTO>> validatorMock;
         private UserService userService;
 
         [SetUp]
         public void Setup()
         {
             userRepositoryMock = new Mock<IUserRepository>(MockBehavior.Strict);
-            userService = new UserService(userRepositoryMock.Object);
+            validatorMock = new Mock<IValidator<UserDTO>>(MockBehavior.Strict);
+            userService = new UserService(userRepositoryMock.Object, validatorMock.Object);
+            SetupValidatorMock();
         }
 
 
@@ -30,9 +35,10 @@ namespace Planner.UnitTests.ServicesTests
         public void CreateUser_WithValidData_ReturnNewGuid()
         {
             var userDto = new UserDTO(ValidName, ValidSurname, ValidEmail);
-            SetupRepositoryMockToCorrectCreateUserAndCheckWithValidEmail();
-            
-            var userId = userService.CreateUser(userDto);
+            SetupUserRepositoryMockCreate();
+            SetupUserRepositoryMockCheckIfEmailExist(ValidEmail, false);
+
+            var userId = userService.Create(userDto);
 
             userId.Should().NotBe(Guid.Empty);
         }
@@ -41,23 +47,20 @@ namespace Planner.UnitTests.ServicesTests
         public void CreateUser_WithExistEmail_ThrowValidationException()
         {
             var userDto = new UserDTO(ValidName, ValidSurname, ExistEmail);
-            SetupRepositoryMockToCheckWithExistEmail();
+            SetupUserRepositoryMockCheckIfEmailExist(ExistEmail, true);
 
-            Action act = () => userService.CreateUser(userDto);
+            Action act = () => userService.Create(userDto);
 
             act.Should().Throw<ValidationException>().Where(e => e.Message.Contains(ExistEmail));
         }
 
+        private void SetupUserRepositoryMockCreate()
+            => userRepositoryMock.Setup(r => r.Create(It.IsAny<User>())).Returns(Guid.NewGuid);
 
-        private void SetupRepositoryMockToCorrectCreateUserAndCheckWithValidEmail()
-        {
-            userRepositoryMock.Setup(r => r.CheckIfEmailExist(ValidEmail)).Returns(false);
-            userRepositoryMock.Setup(r => r.Create(It.IsAny<User>())).Returns(Guid.NewGuid);
-        }
+        private void SetupUserRepositoryMockCheckIfEmailExist(string email, bool result)
+            => userRepositoryMock.Setup(r => r.CheckIfEmailExist(email)).Returns(result);
 
-        private void SetupRepositoryMockToCheckWithExistEmail()
-        {
-            userRepositoryMock.Setup(r => r.CheckIfEmailExist(ExistEmail)).Returns(true);
-        }
+        private void SetupValidatorMock()
+            => validatorMock.Setup(v => v.Validate(It.IsAny<UserDTO>())).Returns(new ValidationResult());
     }
 }

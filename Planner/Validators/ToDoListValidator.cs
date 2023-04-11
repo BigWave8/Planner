@@ -3,7 +3,7 @@ using Planner.DTOs;
 
 namespace Planner.Validators
 {
-    public class ToDoListValidator : AbstractValidator<ToDoListDTO>
+    internal class ToDoListValidator : AbstractValidator<ToDoListDTO>
     {
         public ToDoListValidator() 
         {

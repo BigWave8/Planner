@@ -5,7 +5,7 @@ namespace Planner.Services.Interfaces
 {
     public interface IUserService
     {
-        Guid CreateUser(UserDTO userDto);
-        User GetUserById(Guid id);
+        Guid Create(UserDTO userDto);
+        User GetById(Guid id);
     }
 }

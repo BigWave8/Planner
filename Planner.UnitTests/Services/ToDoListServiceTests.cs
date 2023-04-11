@@ -1,11 +1,13 @@
 ﻿using FluentAssertions;
+using FluentValidation;
+using FluentValidation.Results;
 using Moq;
 using Planner.DTOs;
 using Planner.Models;
-using Planner.Repository.Interfaces;
+using Planner.Repositories.Interfaces;
 using Planner.Services;
 
-namespace Planner.UnitTests.ServicesTests
+namespace Planner.UnitTests.Services
 {
     [TestFixture]
     public class ToDoListServiceTests
@@ -15,9 +17,9 @@ namespace Planner.UnitTests.ServicesTests
         private const string ExistName = "test";
         private const string ExistSurname = "test";
         private const string ExistEmail = "ro@gmail.com";
-        private readonly Guid NotExistUserId = Guid.NewGuid();
         private Mock<IToDoListRepository> toDoListRepositoryMock;
         private Mock<IUserRepository> userRepositoryMock;
+        private Mock<IValidator<ToDoListDTO>> validatorMock;
         private ToDoListService toDoListService;
 
         [SetUp]
@@ -25,7 +27,10 @@ namespace Planner.UnitTests.ServicesTests
         {
             toDoListRepositoryMock = new Mock<IToDoListRepository>(MockBehavior.Strict);
             userRepositoryMock = new Mock<IUserRepository>(MockBehavior.Strict);
-            toDoListService = new ToDoListService(toDoListRepositoryMock.Object, userRepositoryMock.Object);
+            validatorMock = new Mock<IValidator<ToDoListDTO>>(MockBehavior.Strict);
+            toDoListService = new ToDoListService(toDoListRepositoryMock.Object, userRepositoryMock.Object, validatorMock.Object);
+            SetupToDoListRepositoryMock();
+            SetupValidatorMock();
         }
 
 
@@ -33,9 +38,9 @@ namespace Planner.UnitTests.ServicesTests
         public void CreateToDoList_WithValidData_ReturnNewGuid()
         {
             var toDoListDTO = new ToDoListDTO(ValidName, ValidUserId);
-            SetupRepositoryMockToGetValidUserAndCorrectCreateToDoList();
+            SetupUserRepositoryMock(ValidUserId, ValidUser());
 
-            var toDoListId = toDoListService.CreateToDoList(toDoListDTO);
+            var toDoListId = toDoListService.Create(toDoListDTO);
 
             toDoListId.Should().NotBe(Guid.Empty);
         }
@@ -43,10 +48,11 @@ namespace Planner.UnitTests.ServicesTests
         [Test]
         public void CreateToDoList_WithNotExistUser_ThrowUserNotFoundException()
         {
-            var toDoListDTO = new ToDoListDTO(ValidName, NotExistUserId);
-            SetupRepositoryMockToTryGetNotExistUser();
+            Guid notExistUserId = Guid.NewGuid();
+            var toDoListDTO = new ToDoListDTO(ValidName, notExistUserId);
+            SetupUserRepositoryMock(notExistUserId, null);
 
-            Action act = () => toDoListService.CreateToDoList(toDoListDTO);
+            Action act = () => toDoListService.Create(toDoListDTO);
 
             act.Should().Throw<Exception>().Where(e => e.Message.Contains("User not found"));
         }
@@ -59,15 +65,13 @@ namespace Planner.UnitTests.ServicesTests
             Email = ExistEmail
         };
 
-        private void SetupRepositoryMockToGetValidUserAndCorrectCreateToDoList()
-        {
-            userRepositoryMock.Setup(r => r.GetById(ValidUserId)).Returns(ValidUser()); //
-            toDoListRepositoryMock.Setup(r => r.Create(It.IsAny<ToDoList>())).Returns(Guid.NewGuid());
-        }
+        private void SetupToDoListRepositoryMock()
+            => toDoListRepositoryMock.Setup(r => r.Create(It.IsAny<ToDoList>())).Returns(Guid.NewGuid());
 
-        private void SetupRepositoryMockToTryGetNotExistUser()
-        {
-            userRepositoryMock.Setup(r => r.GetById(It.IsAny<Guid>())).Returns<User>(null);
-        }
+        private void SetupUserRepositoryMock(Guid id, User? user)
+            => userRepositoryMock.Setup(r => r.GetById(id)).Returns(user);
+
+        private void SetupValidatorMock()
+            => validatorMock.Setup(v => v.Validate(It.IsAny<ToDoListDTO>())).Returns(new ValidationResult());
     }
 }

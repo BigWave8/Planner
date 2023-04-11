@@ -1,5 +1,4 @@
-﻿using Planner.DTOs;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 
 namespace Planner.Models
 {
@@ -7,9 +6,11 @@ namespace Planner.Models
     {
         [Key]
         public Guid Id { get; set; }
+
         public string Name { get; set; }
+
         public string Surname { get; set; }
+
         public string Email { get; set; }
-        public List<ToDoList>? ToDoList { get; set; }
     }
 }

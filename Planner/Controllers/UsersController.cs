@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Planner.DTOs;
 using Planner.Models;
 using Planner.Services.Interfaces;
+using Task = System.Threading.Tasks.Task;
 
 namespace Planner.Controllers
 {
@@ -18,12 +19,12 @@ namespace Planner.Controllers
         }
 
         [HttpPost]
-        public ActionResult<User> CreateUser(UserDTO userDto)
+        public ActionResult<Task> Create(UserDTO userDto)
         {
             try
             {
-                Guid id = _userService.CreateUser(userDto);
-                return CreatedAtAction("GetUserId", new { id }, userDto);
+                Guid id = _userService.Create(userDto);
+                return Ok(id);
             }
             catch (Exception ex)
             {

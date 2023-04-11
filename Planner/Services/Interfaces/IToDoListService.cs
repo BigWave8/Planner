@@ -5,7 +5,7 @@ namespace Planner.Services.Interfaces
 {
     public interface IToDoListService
     {
-        Guid CreateToDoList(ToDoListDTO toDoListDTO);
-        ToDoList GetToDoListById(Guid id);
+        Guid Create(ToDoListDTO toDoListDTO);
+        ToDoList GetById(Guid id);
     }
 }

@@ -3,6 +3,7 @@
     public class ToDoListDTO
     {
         public string Name { get; set; }
+
         public Guid UserId { get; set; }
 
         public ToDoListDTO(string name, Guid userId) 

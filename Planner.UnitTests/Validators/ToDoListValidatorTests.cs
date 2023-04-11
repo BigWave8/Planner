@@ -4,28 +4,27 @@ using Planner.DTOs;
 using Planner.Validators;
 using ValidationResult = FluentValidation.Results.ValidationResult;
 
-namespace Planner.UnitTests.ValidatorsTests
+namespace Planner.UnitTests.Validators
 {
     [TestFixture]
     public class ToDoListValidatorTests
     {
-        private ToDoListValidator validator;
+        private ToDoListValidator _validator;
         private const string ValidName = "test";
         private readonly Guid ValidUserId = Guid.NewGuid();
 
         [SetUp]
         public void SetUp()
         {
-            validator = new ToDoListValidator();
+            _validator = new ToDoListValidator();
         }
-
 
         [Test]
         public void ToDoListValidator_ValidData_IsValidShoudBeTrue()
         {
             ToDoListDTO toDoListDTO = new(ValidName, ValidUserId);
 
-            ValidationResult result = validator.Validate(toDoListDTO);
+            ValidationResult result = _validator.Validate(toDoListDTO);
 
             result.IsValid.Should().BeTrue();
         }
@@ -35,7 +34,7 @@ namespace Planner.UnitTests.ValidatorsTests
         {
             ToDoListDTO toDoListDTO = new(string.Empty, ValidUserId);
 
-            Action act = () => validator.ValidateAndThrow(toDoListDTO);
+            Action act = () => _validator.ValidateAndThrow(toDoListDTO);
 
             act.Should().Throw<Exception>().Where(e => e.Message.Contains("Name can`t be empty"));
         }
@@ -45,7 +44,7 @@ namespace Planner.UnitTests.ValidatorsTests
         {
             ToDoListDTO toDoListDTO = new(name, ValidUserId);
 
-            Action act = () => validator.ValidateAndThrow(toDoListDTO);
+            Action act = () => _validator.ValidateAndThrow(toDoListDTO);
 
             act.Should().Throw<Exception>().Where(e => e.Message.Contains("Name must not exceed 50 characters"));
         }
@@ -55,7 +54,7 @@ namespace Planner.UnitTests.ValidatorsTests
         {
             ToDoListDTO toDoListDTO = new(ValidName, Guid.Empty);
 
-            Action act = () => validator.ValidateAndThrow(toDoListDTO);
+            Action act = () => _validator.ValidateAndThrow(toDoListDTO);
 
             act.Should().Throw<Exception>().Where(e => e.Message.Contains("User id is required"));
         }

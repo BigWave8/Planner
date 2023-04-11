@@ -1,34 +1,31 @@
 ﻿using Planner.Data;
 using Planner.Models;
-using Planner.Repository.Interfaces;
+using Planner.Repositories.Interfaces;
 
-namespace Planner.Repository
+namespace Planner.Repositories
 {
-    public class UserRepository : IUserRepository
+    internal class UserRepository : IUserRepository
     {
-        private readonly PlannerContext _context;
+        private readonly PlannerDBContext _context;
 
-        public UserRepository(PlannerContext context)
+        public UserRepository(PlannerDBContext context)
         {
             _context = context;
         }
 
         public Guid Create(User user)
         {
-            _context.Set<User>().Add(user);
+            _context.Users.Add(user);
             _context.SaveChanges();
             return user.Id;
         }
 
         public bool CheckIfEmailExist(string email)
-        {
-            return _context.Set<User>()
+            => _context
+                .Users
                 .Any(x => string.Equals(x.Email, email, StringComparison.OrdinalIgnoreCase));
-        }
 
         public User GetById(Guid id)
-        {
-            return _context.Set<User>().Find(id);
-        }
+            => _context.Users.Find(id);
     }
 }

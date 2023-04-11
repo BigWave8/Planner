@@ -4,7 +4,7 @@ using Planner.DTOs;
 using Planner.Models;
 using Planner.Services;
 using Planner.Services.Interfaces;
-using Task = Planner.Models.Task;
+using Task = System.Threading.Tasks.Task;
 
 namespace Planner.Controllers
 {
@@ -19,12 +19,12 @@ namespace Planner.Controllers
         }
 
         [HttpPost]
-        public ActionResult<Task> CreateTask(TaskDTO taskDTO)
+        public ActionResult<Task> Create(TaskDTO taskDTO)
         {
             try
             {
-                Guid id = _taskService.CreateTask(taskDTO);
-                return CreatedAtAction("GetTaskId", new { id }, taskDTO);
+                Guid id = _taskService.Create(taskDTO);
+                return Ok(id);
             }
             catch (Exception ex)
             {
